@@ -2,32 +2,112 @@
 <html>
 <head>
   <title>Dust Racing 2D</title>
+  <style>
+    body { text-align:center; background:black; color:white; }
+    canvas { border:2px solid white; }
+
+    .controls button {
+      padding:10px;
+      margin:5px;
+      font-size:18px;
+    }
+  </style>
 </head>
-<body style="text-align:center">
+
+<body>
 
 <h1>🚗 Dust Racing 2D</h1>
 
-<canvas id="gameCanvas" width="800" height="500" style="border:1px solid black;"></canvas>
+<canvas id="gameCanvas" width="800" height="500"></canvas>
+
+<div class="controls">
+  <button onclick="moveLeft()">⬅️</button>
+  <button onclick="moveRight()">➡️</button>
+  <button onclick="speedUp()">⬆️</button>
+  <button onclick="slowDown()">⬇️</button>
+</div>
 
 <script>
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// simple car
-let x = 50;
+let car = { x: 350, y: 400, speed: 4 };
 
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+// obstacles
+let obstacles = [];
 
-  ctx.fillStyle = "red";
-  ctx.fillRect(x, 200, 50, 30);
-
-  x += 2;
-
-  requestAnimationFrame(draw);
+function createObstacle() {
+  obstacles.push({
+    x: Math.random() * 750,
+    y: -20,
+    type: Math.random()
+  });
 }
 
-draw();
+// controls
+function moveLeft() { car.x -= 20; }
+function moveRight() { car.x += 20; }
+function speedUp() { car.speed += 1; }
+function slowDown() { car.speed -= 1; }
+
+// draw background (space)
+function drawBackground() {
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // stars
+  for(let i=0;i<50;i++){
+    ctx.fillStyle="white";
+    ctx.fillRect(Math.random()*800, Math.random()*500,2,2);
+  }
+}
+
+// sand road
+function drawRoad() {
+  ctx.fillStyle = "#c2b280"; // sand color
+  ctx.fillRect(200, 0, 400, 500);
+}
+
+// car
+function drawCar() {
+  ctx.fillStyle = "red";
+  ctx.fillRect(car.x, car.y, 50, 30);
+}
+
+// obstacles
+function drawObstacles() {
+  obstacles.forEach((obs, i) => {
+    obs.y += car.speed;
+
+    if(obs.type < 0.33){
+      ctx.fillStyle = "brown"; // gadde
+      ctx.fillRect(obs.x, obs.y, 30, 20);
+    } else if(obs.type < 0.66){
+      ctx.fillStyle = "gray"; // patthar
+      ctx.fillRect(obs.x, obs.y, 20, 20);
+    } else {
+      ctx.fillStyle = "darkred"; // khai
+      ctx.fillRect(obs.x, obs.y, 40, 15);
+    }
+
+    if(obs.y > 500) obstacles.splice(i,1);
+  });
+}
+
+// game loop
+function gameLoop() {
+  drawBackground();
+  drawRoad();
+  drawCar();
+  drawObstacles();
+
+  requestAnimationFrame(gameLoop);
+}
+
+// spawn obstacles
+setInterval(createObstacle, 1000);
+
+gameLoop();
 </script>
 
 </body>
