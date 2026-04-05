@@ -3,11 +3,32 @@
 <head>
   <title>Dust Racing 2D</title>
 </head>
-<body style="text-align:center; font-family:Arial;">
+<body style="text-align:center">
 
-  <h1>🚗 Dust Racing 2D</h1>
-  <p>Welcome to my game!</p>
-  <p>Created by Aman 🚀</p>
+<h1>🚗 Dust Racing 2D</h1>
+
+<canvas id="gameCanvas" width="800" height="500" style="border:1px solid black;"></canvas>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// simple car
+let x = 50;
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "red";
+  ctx.fillRect(x, 200, 50, 30);
+
+  x += 2;
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
 
 </body>
 </html>
